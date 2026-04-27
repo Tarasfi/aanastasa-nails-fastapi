@@ -18,7 +18,7 @@ async def get_services(db: db_dependency):
     return db.query(Service).all()
 
 
-@router.post('/service', status_code=status.HTTP_201_CREATED)
+@router.post('/services', status_code=status.HTTP_201_CREATED)
 async def create_service(db: db_dependency, service_request: ServiceRequest):
     service_model = Service(**service_request.model_dump())
     db.add(service_model)
