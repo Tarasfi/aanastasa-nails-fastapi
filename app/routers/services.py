@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from database import get_db
 from models.services import Services
 from schemas.service import ServiceRequest
@@ -27,9 +27,11 @@ async def create_service(db: db_dependency, service_request: ServiceRequest):
     return service_model
 
 
+
+############################# Should add is_active = False instead of that #############################
 #Delete service
 @router.delete("/services/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_service(db: db_dependency, service_id: int):
+async def delete_service(db: db_dependency, service_id: int = Path(gt=0)):
     service_to_delete = db.query(Services).filter(Services.id == service_id).first()
     if service_to_delete is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Service not found')
