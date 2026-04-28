@@ -25,3 +25,14 @@ async def create_service(db: db_dependency, service_request: ServiceRequest):
     db.commit()
     db.refresh(service_model)
     return service_model
+
+
+#Delete service
+@router.delete("/services/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_service(db: db_dependency, service_id: int):
+    service_to_delete = db.query(Services).filter(Services.id == service_id).first()
+    if service_to_delete is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Service not found')
+
+    db.delete(service_to_delete)
+    db.commit()
