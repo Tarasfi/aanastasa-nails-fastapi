@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import Column, Integer, String
 
 
-class Service(Base):
+class Services(Base):
     __tablename__ = "services"
 
     id = Column(Integer, primary_key=True, index=True)

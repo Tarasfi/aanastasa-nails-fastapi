@@ -15,9 +15,11 @@ class BookingRequest(BaseModel):
     def is_in_past(self):
         booking_datetime = datetime.datetime.combine(self.booking_date, self.booking_time).replace(tzinfo=None)
         current_time = datetime.datetime.now()
-        print(current_time)
-        print(booking_datetime)
         return booking_datetime < current_time
+
+
+class BookingStatusUpdate(BaseModel):
+    status: str
 
 
 # Example
