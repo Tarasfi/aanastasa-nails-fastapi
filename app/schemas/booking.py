@@ -1,5 +1,6 @@
 from datetime import date, time
 from pydantic import BaseModel, Field
+import datetime
 
 class BookingRequest(BaseModel):
     client_name: str = Field(min_length=2)
@@ -9,6 +10,15 @@ class BookingRequest(BaseModel):
     booking_time: time
     status: str = "pending"
     service_id: int
+
+    # Preventing bookings in the past
+    def is_in_past(self):
+        booking_datetime = datetime.datetime.combine(self.booking_date, self.booking_time).replace(tzinfo=None)
+        current_time = datetime.datetime.now()
+        print(current_time)
+        print(booking_datetime)
+        return booking_datetime < current_time
+
 
 # Example
 # {
