@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
-import datetime
 from database import get_db
 from models.booking import Bookings
 from models.service import Service
