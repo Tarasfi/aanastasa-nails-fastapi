@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Path, HTTPException
-from crud import crud_service
-from database import get_db
-from schemas.service import ServiceRequest
+from app.crud import crud_service
+from app.database import get_db
+from app.schemas.service import ServiceRequest
 from typing import Annotated
 from sqlalchemy.orm import Session
 from starlette import status

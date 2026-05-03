@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.services import Services
-from schemas.service import ServiceRequest
+from app.models.services import Services
+from app.schemas.service import ServiceRequest
 
 
 def get_all_services(db: Session):

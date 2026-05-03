@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.booking import Bookings
-from schemas.booking import BookingRequest, BookingStatusUpdate
+from app.models.booking import Bookings
+from app.schemas.booking import BookingRequest, BookingStatusUpdate
 
 
 def get_all_bookings(db: Session):

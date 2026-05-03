@@ -1,5 +1,8 @@
 from fastapi import FastAPI
-from routers import services, bookings
+from app.routers import services, bookings
+from app.database import *
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
