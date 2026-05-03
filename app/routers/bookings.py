@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
-from database import get_db
-from schemas.booking import BookingRequest, BookingStatusUpdate
+from app.database import get_db
+from app.schemas.booking import BookingRequest, BookingStatusUpdate
 from sqlalchemy.orm import Session
-from crud import crud_booking
-from crud import crud_service
+from app.crud import crud_booking
+from app.crud import crud_service
 from typing import Annotated
 
 

@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  postgres_db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nails_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: fastapi_app
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres_db
+    volumes:
+      - .:/app
+    environment:
+      - POSTGRESQL_DATABASE_URL=postgresql://user:password@postgres_db:5432/nails_db
+    env_file:
+      - .env
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
