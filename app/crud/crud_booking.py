@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.booking import Bookings
+from app.models.bookings import Bookings
 from app.schemas.booking import BookingRequest, BookingStatusUpdate
 
 

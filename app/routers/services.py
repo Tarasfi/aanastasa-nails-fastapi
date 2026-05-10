@@ -17,11 +17,16 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def get_services(db: db_dependency):
     return crud_service.get_all_services(db)
 
+@router.get('/services/{service_id}', status_code=status.HTTP_200_OK)
+def get_service_by_id(db: db_dependency, service_id: int):
+    if not crud_service.get_service_by_id(db, service_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Service not found')
+    return crud_service.get_service_by_id(db, service_id)
+
 
 @router.post('/services', status_code=status.HTTP_201_CREATED)
 async def create_service(db: db_dependency, service_request: ServiceRequest):
     return crud_service.create_new_service(db, service_request)
-
 
 
 ############################# Should add is_active = False instead of that #############################
