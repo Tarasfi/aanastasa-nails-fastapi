@@ -1,0 +1,108 @@
+from fastapi import status
+
+#------------------------- TEST READ -------------------------
+def test_get_all_bookings(client, test_booking):
+    response = client.get('/bookings')
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) > 0
+
+#------------------------- TEST CREATE -------------------------
+
+def test_create_booking(client, test_service):
+    request_data = {
+        "client_name": "TestName",
+        "client_surname": "TestSurname",
+        "client_phone": "+380967676767",
+        "booking_date": "2100-06-02",
+        "booking_time": "14:30:00",
+        "status": "pending",
+        "service_id": test_service.id,
+
+    }
+
+    response = client.post("/bookings", json=request_data)
+    data = response.json()
+    assert response.status_code == status.HTTP_201_CREATED
+    assert data['client_name'] == "TestName"
+    assert data['client_surname'] == "TestSurname"
+    assert data['client_phone'] == "+380967676767"
+    assert data['booking_date'] == "2100-06-02"
+    assert data['booking_time'] == "14:30:00"
+    assert data['status'] == "pending"
+    assert data['service_id'] == test_service.id
+
+def test_create_booking_past(client, test_service):
+    request_data = {
+        "client_name": "TestName",
+        "client_surname": "TestSurname",
+        "client_phone": "+380967676767",
+        "booking_date": "2006-06-02",
+        "booking_time": "14:30:00",
+        "status": "pending",
+        "service_id": test_service.id,
+
+    }
+
+    response = client.post('/bookings', json=request_data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {'detail': 'Booking time cannot be in the past'}
+
+
+def test_create_booking_service_not_found(client):
+    request_data = {
+        "client_name": "TestName",
+        "client_surname": "TestSurname",
+        "client_phone": "+380967676767",
+        "booking_date": "2100-06-02",
+        "booking_time": "14:30:00",
+        "status": "pending",
+        "service_id": 99999,
+
+    }
+
+    response = client.post('/bookings', json=request_data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {'detail': 'Service not found'}
+
+
+#------------------------- TEST PATCH -------------------------
+
+def test_patch_booking_status(client, test_booking):
+    request_data = {
+          "status": "confirmed"
+        }
+    response = client.patch(f'/bookings/{test_booking.id}/status', json=request_data)
+    data = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert data['status'] == "confirmed"
+
+def test_patch_booking_invalid_status(client, test_booking):
+    request_data = {
+        "status": "taras67"
+    }
+    response = client.patch(f'/bookings/{test_booking.id}/status', json=request_data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+
+def test_patch_booking_not_found(client):
+    request_data = {
+        "status": "confirmed"
+    }
+    response = client.patch('/bookings/99999/status', json=request_data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {"detail": "Booking not found"}
+
+
+
+#------------------------- TEST DELETE -------------------------
+
+def test_delete_booking(client, test_booking):
+    response = client.delete(f'/bookings/{test_booking.id}')
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+
+def test_delete_booking_not_found(client, test_booking):
+    response = client.delete(f'/bookings/{test_booking.id + 100}')
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {"detail": "Booking not found"}

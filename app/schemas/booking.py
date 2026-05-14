@@ -1,6 +1,14 @@
 from datetime import date, time
 from pydantic import BaseModel, Field
+from enum import Enum
 import datetime
+
+
+class OrderStatusEnum(str, Enum):
+    PENDING="pending"
+    CONFIRMED="confirmed"
+    CANCELLED="cancelled"
+
 
 class BookingRequest(BaseModel):
     client_name: str = Field(min_length=2)
@@ -8,7 +16,7 @@ class BookingRequest(BaseModel):
     client_phone: str
     booking_date: date
     booking_time: time
-    status: str = "pending"
+    status: OrderStatusEnum
     service_id: int
 
     # Preventing bookings in the past
@@ -19,7 +27,7 @@ class BookingRequest(BaseModel):
 
 
 class BookingStatusUpdate(BaseModel):
-    status: str
+    status: OrderStatusEnum
 
 
 # Example

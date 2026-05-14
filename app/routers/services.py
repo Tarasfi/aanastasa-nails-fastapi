@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 
-
 router = APIRouter()
 
 
@@ -36,4 +35,5 @@ async def delete_service(db: db_dependency, service_id: int = Path(gt=0)):
     service_to_delete = crud_service.delete_service(db, service_id)
     if not service_to_delete:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Service not found')
+
 

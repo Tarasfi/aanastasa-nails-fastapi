@@ -6,3 +6,5 @@ venv/
 .venv/
 .env.local
 .idea/
+.pytest_cache/
+testdb.db
