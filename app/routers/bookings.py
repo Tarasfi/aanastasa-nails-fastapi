@@ -12,11 +12,12 @@ router = APIRouter()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+#Read all bookings
 @router.get("/bookings", status_code=status.HTTP_200_OK)
 async def get_all_bookings(db: db_dependency):
     return crud_booking.get_all_bookings(db)
 
-
+#Create booking
 @router.post("/bookings", status_code=status.HTTP_201_CREATED)
 async def create_booking(booking_request: BookingRequest, db: db_dependency):
     #Preventing bookings in the past
@@ -35,9 +36,10 @@ async def create_booking(booking_request: BookingRequest, db: db_dependency):
 
 
 #Update booking status: pending -> confirmed
-@router.patch("/bookings/{booking_id}/status")
+@router.patch("/bookings/{booking_id}/status", status_code=status.HTTP_200_OK)
 async def update_booking_status(booking_status_update: BookingStatusUpdate, db: db_dependency, booking_id: int = Path(gt=0)):
     updated_booking = crud_booking.update_booking_status(booking_status_update, db, booking_id)
+
     if updated_booking is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Booking not found')
 
