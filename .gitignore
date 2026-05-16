@@ -8,3 +8,4 @@ venv/
 .idea/
 .pytest_cache/
 testdb.db
+alembic.ini

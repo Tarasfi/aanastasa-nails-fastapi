@@ -20,7 +20,7 @@ async def get_all_bookings(db: db_dependency):
 #Create booking
 @router.post("/bookings", status_code=status.HTTP_201_CREATED)
 async def create_booking(booking_request: BookingRequest, db: db_dependency):
-    #Preventing bookings in the past
+    #Preventing booking in the past
     if booking_request.is_in_past():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
