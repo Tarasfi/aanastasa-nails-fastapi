@@ -19,11 +19,14 @@ class BookingRequest(BaseModel):
     status: OrderStatusEnum
     service_id: int
 
+
     # Preventing bookings in the past
     def is_in_past(self):
         booking_datetime = datetime.datetime.combine(self.booking_date, self.booking_time).replace(tzinfo=None)
         current_time = datetime.datetime.now()
         return booking_datetime < current_time
+
+
 
 
 class BookingStatusUpdate(BaseModel):

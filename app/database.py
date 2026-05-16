@@ -1,7 +1,11 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import os
+
+
 
 #My local DB
 # POSTGRESQL_DATABASE_URL = 'postgresql://postgres:taras@localhost/AanastasaNailsDatabase'
@@ -23,3 +27,4 @@ def get_db():
         yield db
     finally:
         db.close()
+

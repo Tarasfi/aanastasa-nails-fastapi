@@ -9,10 +9,11 @@ class Bookings(Base):
 
     client_name = Column(String, nullable=False)
     client_surname = Column(String)
-    client_phone = Column(String)
+    client_phone = Column(String, nullable=False)
 
-    booking_date = Column(Date)
-    booking_time = Column(Time)
+    booking_date = Column(Date, nullable=False)
+    booking_time = Column(Time, nullable=False)
+    booking_end = Column(Time, nullable=True)
 
     status = Column(String, default="pending")
 
