@@ -3,6 +3,7 @@ from app.models.bookings import Bookings
 from app.models.services import Services
 from app.schemas.booking import BookingRequest, BookingStatusUpdate
 import datetime
+from fastapi import HTTPException
 
 
 def get_all_bookings(db: Session):
@@ -12,12 +13,19 @@ def get_booking_by_id(db: Session, booking_id: int):
     return db.query(Bookings).filter(Bookings.id == booking_id).first()
 
 def create_booking(booking_request: BookingRequest, db: Session):
+    #Get new booking_end
     service_duration_in_minutes = db.query(Services.duration_minutes).filter(Services.id == booking_request.service_id).scalar() #Look for duration of the service that user picked
     booking_datetime = datetime.datetime.combine(booking_request.booking_date, booking_request.booking_time).replace(tzinfo=None) #Returns a datetime ex.:"2026-08-16T13:00:00"
     session_end_datetime = booking_datetime + datetime.timedelta(minutes=service_duration_in_minutes) #Returns a datetime + duration of servic ex.:"2026-08-16T14:30:00"
-    booking_end_time = session_end_datetime.time() #Raw end_time "14:30:00"
+    booking_end_time = session_end_datetime.time() #Raw booking_end "14:30:00"
+
+    #Check if the time available
+    time_occupied = db.query(Bookings).filter(Bookings.booking_date == booking_request.booking_date, booking_request.booking_time < Bookings.booking_end, booking_end_time > Bookings.booking_time).first()
 
     booking_model = Bookings(**booking_request.model_dump(), booking_end=booking_end_time)
+
+    if time_occupied:
+        raise HTTPException(status_code=400, detail="Time is occupied")
 
     db.add(booking_model)
     db.commit()
