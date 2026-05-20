@@ -8,7 +8,7 @@ def test_get_all_bookings(client, test_booking):
 
 #------------------------- TEST CREATE -------------------------
 
-def test_create_booking(client, test_service):
+def test_create_booking_success(client, test_service):
     request_data = {
         "client_name": "TestName",
         "client_surname": "TestSurname",
@@ -30,6 +30,40 @@ def test_create_booking(client, test_service):
     assert data['booking_time'] == "14:30:00"
     assert data['status'] == "pending"
     assert data['service_id'] == test_service.id
+
+def test_create_booking_conflict(client, test_service):
+    #First client creates the booking for 14:30
+    first_request_data = {
+        "client_name": "First",
+        "client_surname": "Client",
+        "client_phone": "+380967676767",
+        "booking_date": "2100-08-02",
+        "booking_time": "14:30:00",
+        "status": "pending",
+        "service_id": test_service.id,
+
+    }
+    first_response = client.post("/bookings", json=first_request_data)
+    assert first_response.status_code == status.HTTP_201_CREATED
+
+    #Second client creates booking for 14:30
+    conflict_data = {
+        "client_name": "Second",
+        "client_surname": "Client",
+        "client_phone": "+380967676767",
+        "booking_date": "2100-08-02",
+        "booking_time": "14:30:00",
+        "status": "pending",
+        "service_id": test_service.id,
+
+    }
+
+    response = client.post("/bookings", json=conflict_data)
+    data = response.json()
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert data == {'detail': 'Time is occupied'}
+
 
 def test_create_booking_past(client, test_service):
     request_data = {

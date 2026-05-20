@@ -16,7 +16,6 @@ class BookingRequest(BaseModel):
     client_phone: str
     booking_date: date
     booking_time: time
-    status: OrderStatusEnum
     service_id: int
 
 
