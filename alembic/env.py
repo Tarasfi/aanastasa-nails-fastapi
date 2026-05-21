@@ -4,11 +4,13 @@ from sqlalchemy import pool
 from alembic import context
 import os
 from dotenv import load_dotenv
+load_dotenv()
 from app.database import Base
 from app.models.bookings import Bookings
 from app.models.services import Services
+from app.models.admin import Admin
 
-load_dotenv()
+
 
 config = context.config
 
