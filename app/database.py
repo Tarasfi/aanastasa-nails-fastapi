@@ -4,6 +4,7 @@ load_dotenv()
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from app.core.security import get_password_hash
 
 
 
@@ -25,6 +26,28 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    finally:
+        db.close()
+
+
+def init_admin():
+    from app.models.admin import Admin
+    db = SessionLocal()
+    try:
+        admin_exists = db.query(Admin).first()
+        if not admin_exists:
+            hashed_password = get_password_hash("admin123")
+
+            default_admin = Admin(username="admin", hashed_password=hashed_password)
+
+            db.add(default_admin)
+            db.commit()
+            print("Default admin created. Login: admin | Password: admin123")
+        else:
+            print("Admin already exists, admin creating skipped")
+    except Exception as e:
+        print(f"Error at admin initialisation: {e}")
+        db.rollback()
     finally:
         db.close()
 
