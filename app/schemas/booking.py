@@ -26,8 +26,6 @@ class BookingRequest(BaseModel):
         return booking_datetime < current_time
 
 
-
-
 class BookingStatusUpdate(BaseModel):
     status: OrderStatusEnum
 
