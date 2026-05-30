@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from app.models.services import Services
 from app.schemas.service import ServiceRequest
-
+from app.routers.deps import get_current_admin
+from app.models.admin import Admin
+from fastapi import Depends
 
 def get_all_services(db: Session):
     all_services = db.query(Services).all()

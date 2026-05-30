@@ -3,6 +3,8 @@ from app.routers import services, bookings, auth
 from app.database import *
 from contextlib import asynccontextmanager
 
+
+# Create test admin if not exists
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)

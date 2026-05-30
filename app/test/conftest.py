@@ -12,9 +12,10 @@ from app.models.bookings import Bookings
 
 from main import app
 
+from app.routers.deps import get_current_admin
+from app.models.admin import Admin
 
-
-#------------------------- DATABASE -------------------------
+# ------------------------- DATABASE -------------------------
 
 
 TEST_SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -22,13 +23,14 @@ TEST_SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 engine = create_engine(
     TEST_SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False},
-    poolclass = StaticPool
+    poolclass=StaticPool
 )
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-#Create Tables
+# Create Tables
 Base.metadata.create_all(bind=engine)
+
 
 def override_get_db():
     db = TestingSessionLocal()
@@ -37,16 +39,27 @@ def override_get_db():
     finally:
         db.close()
 
+
 app.dependency_overrides[get_db] = override_get_db
 
 
-#------------------------- FIXTURES -------------------------
+# ------------------------- ADMIN -------------------------
 
+
+def override_get_current_admin():
+    return Admin(id=1, username="test_admin")
+
+
+app.dependency_overrides[get_current_admin] = override_get_current_admin
+
+
+# ------------------------- FIXTURES -------------------------
 
 
 @pytest.fixture()
 def client():
     return TestClient(app)
+
 
 @pytest.fixture
 def db_session():
@@ -54,7 +67,7 @@ def db_session():
     try:
         yield db
     finally:
-        db.rollback() #Revert changes if failure
+        db.rollback()  # Revert changes if failure
         db.close()
 
 
@@ -66,14 +79,11 @@ def test_service(db_session):
     db_session.commit()
     db_session.refresh(service)
 
-
     return service
-
 
 
 @pytest.fixture
 def test_booking(db_session, test_service):
-
     booking = Bookings(client_name="Tarastest",
                        client_surname='firkotest',
                        client_phone="+380988761442",
@@ -86,11 +96,4 @@ def test_booking(db_session, test_service):
     db_session.commit()
     db_session.refresh(booking)
 
-
     return booking
-
-
-
-
-
-

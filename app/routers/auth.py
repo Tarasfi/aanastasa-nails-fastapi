@@ -16,20 +16,17 @@ router = APIRouter(
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     admin = db.query(Admin).filter(Admin.username == form_data.username).first()
-
-    if not admin:
-        raise HTTPException(
+    wrong_login_or_password_error = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Wrong login or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    if not admin:
+        raise wrong_login_or_password_error
 
     if not verify_password(form_data.password, admin.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Wrong login or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise wrong_login_or_password_error
 
     access_token = create_access_token(data={"sub": admin.username})
 

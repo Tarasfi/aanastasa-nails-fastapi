@@ -30,6 +30,7 @@ def get_db():
         db.close()
 
 
+#Create default admin if not exists
 def init_admin():
     from app.models.admin import Admin
     db = SessionLocal()
