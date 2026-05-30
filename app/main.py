@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import services, bookings
+from app.routers import services, bookings, auth
 from app.database import *
 from contextlib import asynccontextmanager
 
@@ -18,5 +18,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.include_router(auth.router)
 app.include_router(bookings.router)
 app.include_router(services.router)
