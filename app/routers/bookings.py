@@ -8,7 +8,9 @@ from app.crud import crud_service
 from typing import Annotated
 
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Bookings"]
+)
 
 db_dependency = Annotated[Session, Depends(get_db)]
 

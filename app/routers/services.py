@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Services"]
+)
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
