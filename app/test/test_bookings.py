@@ -130,7 +130,7 @@ def test_patch_booking_not_found(client):
 
 #------------------------- TEST DELETE -------------------------
 
-def test_delete_booking(client, test_booking):
+def test_cancel_booking(client, test_booking):
     response = client.delete(f'/bookings/{test_booking.id}')
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
