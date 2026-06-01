@@ -49,7 +49,6 @@ app.dependency_overrides[get_db] = override_get_db
 def override_get_current_admin():
     return Admin(id=1, username="test_admin")
 
-
 app.dependency_overrides[get_current_admin] = override_get_current_admin
 
 
