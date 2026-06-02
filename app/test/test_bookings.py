@@ -62,7 +62,7 @@ def test_create_booking_conflict(client, test_service):
     data = response.json()
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert data == {'detail': 'Time is occupied'}
+    assert data == {'detail': 'Time is occupied.'}
 
 
 def test_create_booking_past(client, test_service):
