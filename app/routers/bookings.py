@@ -1,11 +1,13 @@
+from urllib import response
+
 from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
 from app.database import get_db
-from app.schemas.booking import BookingRequest, BookingStatusUpdate
+from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotResponse, AvailableSlotsRequest
 from sqlalchemy.orm import Session
 from app.crud import crud_booking
 from app.crud import crud_service
-from typing import Annotated
+from typing import Annotated, List
 from app.models.admin import Admin
 from app.routers.deps import get_current_admin
 
@@ -58,6 +60,12 @@ async def cancel_booking(db: db_dependency, booking_id: int = Path(gt=0), curren
     if not booking_to_cancel:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Booking not found')
 
+
+
+#Get available slots
+@router.post("/available-slots", response_model=List[AvailableSlotResponse])
+async def get_available_slots(db: db_dependency, slots: AvailableSlotsRequest):
+    return crud_booking.get_all_available_slots(db, slots)
 
 
 # @router.delete("/bookings/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.bookings import Bookings
 from app.models.services import Services
-from app.schemas.booking import BookingRequest, BookingStatusUpdate
+from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotsRequest
 from datetime import datetime, time, timedelta
 from fastapi import HTTPException
 
@@ -77,3 +77,7 @@ def cancel_booking(db: Session, booking_id: int):
         db.commit()
         return True
     return False
+
+def get_all_available_slots(db: Session, slots_request: AvailableSlotsRequest):
+    all_slots = db.query(Bookings).filter(Bookings.booking_date == slots_request.date).scalar()
+    return all_slots
