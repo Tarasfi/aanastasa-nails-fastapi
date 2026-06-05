@@ -1,9 +1,8 @@
-from urllib import response
-
-from fastapi import APIRouter, Depends, HTTPException, Path
+from datetime import date
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from starlette import status
 from app.database import get_db
-from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotResponse, AvailableSlotsRequest
+from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotResponse
 from sqlalchemy.orm import Session
 from app.crud import crud_booking
 from app.crud import crud_service
@@ -63,9 +62,10 @@ async def cancel_booking(db: db_dependency, booking_id: int = Path(gt=0), curren
 
 
 #Get available slots
-@router.post("/available-slots", response_model=List[AvailableSlotResponse])
-async def get_available_slots(db: db_dependency, slots: AvailableSlotsRequest):
-    return crud_booking.get_all_available_slots(db, slots)
+@router.get("/available-slots")
+async def get_available_slots(db: db_dependency, booking_date: date = Query(), service_id: int = Query()):
+
+    return crud_booking.get_all_available_slots(db,booking_date, service_id)
 
 
 # @router.delete("/bookings/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -77,3 +77,5 @@ async def get_available_slots(db: db_dependency, slots: AvailableSlotsRequest):
 #     db.delete(booking_to_delete)
 #
 #     db.commit()
+
+#2026-08-17
