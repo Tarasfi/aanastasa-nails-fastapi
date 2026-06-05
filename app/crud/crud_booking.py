@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.bookings import Bookings
 from app.models.services import Services
-from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotsRequest
+from app.schemas.booking import BookingRequest, BookingStatusUpdate
 from datetime import datetime, time, timedelta
 from fastapi import HTTPException
 
@@ -38,8 +38,8 @@ def check_time_collision(db, booking_date, start_time, end_time):
         start_time < Bookings.booking_end,
         end_time > Bookings.booking_time
     ).first()
-    if collision:
-        raise HTTPException(status_code=400, detail="Time is occupied.")
+    return collision
+
 
 
 def create_booking(booking_request: BookingRequest, db: Session):
@@ -50,7 +50,10 @@ def create_booking(booking_request: BookingRequest, db: Session):
 
     validate_working_hours(booking_request.booking_date, booking_request.booking_time, booking_end_time)
 
-    check_time_collision(db, booking_request.booking_date, booking_request.booking_time, booking_end_time)
+    collision_check = check_time_collision(db, booking_request.booking_date, booking_request.booking_time, booking_end_time)
+
+    if collision_check:
+        raise HTTPException(status_code=400, detail="Time is occupied.")
 
 
     new_booking = Bookings(**booking_request.model_dump(), booking_end=booking_end_time)
@@ -78,6 +81,37 @@ def cancel_booking(db: Session, booking_id: int):
         return True
     return False
 
-def get_all_available_slots(db: Session, slots_request: AvailableSlotsRequest):
-    all_slots = db.query(Bookings).filter(Bookings.booking_date == slots_request.date).scalar()
-    return all_slots
+def get_all_available_slots(db: Session, booking_date, service_id):
+    occupied_slots = db.query(Bookings).filter(Bookings.booking_date == booking_date).all()
+
+    if booking_date.weekday() == 6:
+        raise HTTPException(status_code=400, detail="We are closed on Sunday.")
+    if booking_date.weekday() == 5:
+        if occupied_slots:
+            return occupied_slots
+    else:
+        if occupied_slots:
+
+            result = []
+            check_time = datetime.combine(booking_date, SHIFT_START_WEEKDAYS)
+            end_time = datetime.combine(booking_date, SHIFT_END_WEEKDAYS)
+            while check_time <= end_time:
+                result.append(check_time.time().strftime("%H:%M"))
+
+                check_time += timedelta(minutes=30)
+
+            return result
+            # for slot in occupied_slots:
+            #     result.append(check_time_collision(db, booking_date, slot.booking_time, slot.booking_end))
+            # return result
+
+
+
+
+
+
+
+
+
+
+

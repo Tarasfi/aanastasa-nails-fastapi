@@ -30,10 +30,6 @@ class BookingStatusUpdate(BaseModel):
     status: OrderStatusEnum
 
 
-class AvailableSlotsRequest(BaseModel):
-    date: str
-    service_id: int
-
 class AvailableSlotResponse(BaseModel):
     time: str
     available: bool
