@@ -62,7 +62,7 @@ async def cancel_booking(db: db_dependency, booking_id: int = Path(gt=0), curren
 
 
 #Get available slots
-@router.get("/available-slots")
+@router.get("/available-slots", response_model=List[AvailableSlotResponse])
 async def get_available_slots(db: db_dependency, booking_date: date = Query(), service_id: int = Query()):
 
     return crud_booking.get_all_available_slots(db,booking_date, service_id)
