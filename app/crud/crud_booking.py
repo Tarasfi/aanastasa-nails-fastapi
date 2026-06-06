@@ -86,32 +86,31 @@ def get_all_available_slots(db: Session, booking_date, service_id):
 
     if booking_date.weekday() == 6:
         raise HTTPException(status_code=400, detail="We are closed on Sunday.")
+
     if booking_date.weekday() == 5:
-        if occupied_slots:
-            return occupied_slots
+        start_time = datetime.combine(booking_date, SHIFT_START_SATURDAY)
+        end_time = datetime.combine(booking_date, SHIFT_END_SATURDAY)
     else:
-        if occupied_slots:
+        start_time = datetime.combine(booking_date, SHIFT_START_WEEKDAYS)
+        end_time = datetime.combine(booking_date, SHIFT_END_WEEKDAYS)
 
-            result = []
-            check_time = datetime.combine(booking_date, SHIFT_START_WEEKDAYS)
-            end_time = datetime.combine(booking_date, SHIFT_END_WEEKDAYS)
-            while check_time <= end_time:
-                result.append(check_time.time().strftime("%H:%M"))
+    duration = db.query(Services.duration_minutes).filter(Services.id == service_id).scalar()
 
-                check_time += timedelta(minutes=30)
+    result = []
 
-            return result
-            # for slot in occupied_slots:
-            #     result.append(check_time_collision(db, booking_date, slot.booking_time, slot.booking_end))
-            # return result
+    while start_time <= end_time:
+        potential_end = start_time + timedelta(minutes=duration)
+        is_occupied = any(start_time.time() < slot.booking_end and potential_end.time() > slot.booking_time for slot in occupied_slots)
 
+        if potential_end <= end_time:
+            result.append({"time": start_time.time().strftime("%H:%M"),
+                                   "occupied": is_occupied})
+        else:
+            result.append({"time": start_time.time().strftime("%H:%M"),
+                                   "occupied": True})
+        start_time += timedelta(minutes=30)
 
-
-
-
-
-
-
+    return result
 
 
 

@@ -32,7 +32,7 @@ class BookingStatusUpdate(BaseModel):
 
 class AvailableSlotResponse(BaseModel):
     time: str
-    available: bool
+    occupied: bool
 
 
 
