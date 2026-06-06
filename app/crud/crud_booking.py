@@ -81,27 +81,41 @@ def cancel_booking(db: Session, booking_id: int):
         return True
     return False
 
-def get_all_available_slots(db: Session, booking_date, service_id):
-    occupied_slots = db.query(Bookings).filter(Bookings.booking_date == booking_date).all()
 
+
+def get_working_hours(booking_date):
     if booking_date.weekday() == 6:
         raise HTTPException(status_code=400, detail="We are closed on Sunday.")
 
     if booking_date.weekday() == 5:
         start_time = datetime.combine(booking_date, SHIFT_START_SATURDAY)
         end_time = datetime.combine(booking_date, SHIFT_END_SATURDAY)
+        return start_time, end_time
     else:
         start_time = datetime.combine(booking_date, SHIFT_START_WEEKDAYS)
         end_time = datetime.combine(booking_date, SHIFT_END_WEEKDAYS)
+        return start_time, end_time
 
+
+def is_slot_occupied(start_time, potential_end, occupied_slots):
+    return any(start_time.time() < slot.booking_end and potential_end.time() > slot.booking_time for slot in occupied_slots)
+
+
+
+def get_all_available_slots(db: Session, booking_date, service_id):
+    occupied_slots = db.query(Bookings).filter(Bookings.booking_date == booking_date).all()
+    start_time, end_time = get_working_hours(booking_date)
     duration = db.query(Services.duration_minutes).filter(Services.id == service_id).scalar()
+    if duration is None:
+        raise HTTPException(status_code=404, detail="Service not found.")
 
     result = []
-
     while start_time <= end_time:
         potential_end = start_time + timedelta(minutes=duration)
-        is_occupied = any(start_time.time() < slot.booking_end and potential_end.time() > slot.booking_time for slot in occupied_slots)
+        is_occupied = is_slot_occupied(start_time, potential_end, occupied_slots)
 
+        if start_time < datetime.now():
+            is_occupied = True
         if potential_end <= end_time:
             result.append({"time": start_time.time().strftime("%H:%M"),
                                    "occupied": is_occupied})
