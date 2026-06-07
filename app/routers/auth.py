@@ -18,7 +18,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     admin = db.query(Admin).filter(Admin.username == form_data.username).first()
     wrong_login_or_password_error = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Wrong login or password",
+            detail="Неправильний логін або пароль",
             headers={"WWW-Authenticate": "Bearer"},
         )
     

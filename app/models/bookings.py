@@ -8,7 +8,6 @@ class Bookings(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     client_name = Column(String, nullable=False)
-    client_surname = Column(String)
     client_phone = Column(String, nullable=False)
 
     booking_date = Column(Date, nullable=False)

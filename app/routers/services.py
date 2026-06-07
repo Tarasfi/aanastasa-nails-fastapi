@@ -25,7 +25,7 @@ async def get_services(db: db_dependency):
 @router.get('/services/{service_id}', status_code=status.HTTP_200_OK)
 def get_service_by_id(db: db_dependency, service_id: int):
     if not crud_service.get_service_by_id(db, service_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Service not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Послуги не знайдено')
     return crud_service.get_service_by_id(db, service_id)
 
 
@@ -40,6 +40,6 @@ async def create_service(db: db_dependency, service_request: ServiceRequest, cur
 async def delete_service(db: db_dependency, service_id: int = Path(gt=0), current_admin: Admin = Depends(get_current_admin)):
     service_to_delete = crud_service.delete_service(db, service_id)
     if not service_to_delete:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Service not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Послуги не знайдено')
 
 
