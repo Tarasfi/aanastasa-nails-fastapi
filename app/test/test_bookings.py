@@ -11,7 +11,6 @@ def test_get_all_bookings(client, test_booking):
 def test_create_booking_success(client, test_service):
     request_data = {
         "client_name": "TestName",
-        "client_surname": "TestSurname",
         "client_phone": "+380967676767",
         "booking_date": "2100-06-02",
         "booking_time": "14:30:00",
@@ -24,7 +23,6 @@ def test_create_booking_success(client, test_service):
     data = response.json()
     assert response.status_code == status.HTTP_201_CREATED
     assert data['client_name'] == "TestName"
-    assert data['client_surname'] == "TestSurname"
     assert data['client_phone'] == "+380967676767"
     assert data['booking_date'] == "2100-06-02"
     assert data['booking_time'] == "14:30:00"
@@ -35,7 +33,6 @@ def test_create_booking_conflict(client, test_service):
     #First client creates the booking for 14:30
     first_request_data = {
         "client_name": "First",
-        "client_surname": "Client",
         "client_phone": "+380967676767",
         "booking_date": "2100-08-02",
         "booking_time": "14:30:00",
@@ -49,7 +46,6 @@ def test_create_booking_conflict(client, test_service):
     #Second client creates booking for 14:30
     conflict_data = {
         "client_name": "Second",
-        "client_surname": "Client",
         "client_phone": "+380967676767",
         "booking_date": "2100-08-02",
         "booking_time": "14:30:00",
@@ -68,7 +64,6 @@ def test_create_booking_conflict(client, test_service):
 def test_create_booking_past(client, test_service):
     request_data = {
         "client_name": "TestName",
-        "client_surname": "TestSurname",
         "client_phone": "+380967676767",
         "booking_date": "2006-06-02",
         "booking_time": "14:30:00",
@@ -85,7 +80,6 @@ def test_create_booking_past(client, test_service):
 def test_create_booking_service_not_found(client):
     request_data = {
         "client_name": "TestName",
-        "client_surname": "TestSurname",
         "client_phone": "+380967676767",
         "booking_date": "2100-06-02",
         "booking_time": "14:30:00",

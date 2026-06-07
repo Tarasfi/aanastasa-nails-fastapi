@@ -84,7 +84,6 @@ def test_service(db_session):
 @pytest.fixture
 def test_booking(db_session, test_service):
     booking = Bookings(client_name="Tarastest",
-                       client_surname='firkotest',
                        client_phone="+380988761442",
                        booking_date=dt.date.fromisoformat('2026-06-02'),
                        booking_time=dt.time.fromisoformat('14:30:00'),

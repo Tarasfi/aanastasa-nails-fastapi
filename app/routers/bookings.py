@@ -36,7 +36,7 @@ async def create_booking(booking_request: BookingRequest, db: db_dependency):
     #Preventing the booking of non-existing service
     service_existence = crud_service.get_service_by_id(db, booking_request.service_id)
     if service_existence is None:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail="Послуги не знайдено")
 
     return crud_booking.create_booking(booking_request, db)
 
@@ -47,7 +47,7 @@ async def update_booking_status(booking_status_update: BookingStatusUpdate, db: 
     updated_booking = crud_booking.update_booking_status(booking_status_update, db, booking_id)
 
     if updated_booking is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Booking not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Запису не знайдено')
 
     return updated_booking
 
@@ -57,7 +57,7 @@ async def update_booking_status(booking_status_update: BookingStatusUpdate, db: 
 async def cancel_booking(db: db_dependency, booking_id: int = Path(gt=0), current_admin: Admin = Depends(get_current_admin)):
     booking_to_cancel = crud_booking.cancel_booking(db, booking_id)
     if not booking_to_cancel:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Booking not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Запису не знайдено')
 
 
 

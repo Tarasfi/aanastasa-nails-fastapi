@@ -12,7 +12,6 @@ class OrderStatusEnum(str, Enum):
 
 class BookingRequest(BaseModel):
     client_name: str = Field(min_length=2)
-    client_surname: str = Field(min_length=2)
     client_phone: str
     booking_date: date
     booking_time: time
