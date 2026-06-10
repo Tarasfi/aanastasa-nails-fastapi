@@ -305,7 +305,6 @@ export default function App() {
             <button onClick={() => setCarouselIdx(i => (i + 1) % PHOTOS.length)}
               style={{ background: "#fff", border: "1.5px solid #e8d5d0", borderRadius: "50%", width: 44, height: 44, cursor: "pointer", fontSize: 18, flexShrink: 0 }}>›</button>
           </div>
-          <p className="jost" style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: "#b09090" }}>Замініть плейсхолдери на реальні фото ✦</p>
         </div>
       </section>
 
@@ -314,7 +313,7 @@ export default function App() {
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div>
             <div style={{ fontSize: 24, fontWeight: 400, marginBottom: 6 }}>Nail Studio <em style={{ color: "#e8b4bb" }}>by Anastasia</em></div>
-            <div className="jost" style={{ fontSize: 13, color: "#a09090", lineHeight: 1.8 }}>📍 вул. Хрещатик 12, Київ<br />📞 +38 (099) 123-45-67</div>
+            <div className="jost" style={{ fontSize: 13, color: "#a09090", lineHeight: 1.8 }}>📍 вул. Лесі Українки 2<br />📞 +38 (099) 123-45-67</div>
           </div>
           <div style={{ display: "flex", gap: 16 }}>
             {[{ label: "Instagram", icon: "📸", href: "https://instagram.com" }, { label: "Telegram", icon: "✈️", href: "https://t.me" }].map(link => (
@@ -326,7 +325,7 @@ export default function App() {
           </div>
         </div>
         <div style={{ maxWidth: 1100, margin: "32px auto 0", borderTop: "1px solid #3a2f2a", paddingTop: 24, textAlign: "center" }}>
-          <span className="jost" style={{ fontSize: 12, color: "#6a5a5a" }}>© 2026 Nail Studio by Anastasia</span>
+          <span className="jost" style={{ fontSize: 12, color: "#6a5a5a" }}>© 2026 Aanastasa Nails</span>
         </div>
       </footer>
 
