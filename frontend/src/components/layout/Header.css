@@ -1,0 +1,97 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Верхній рядок */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  position: relative;
+  z-index: 1002;
+}
+
+.header-logo img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #b79e8a; 
+  object-fit: cover;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-phone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #111111;
+  font-weight: 700;
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-burger {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #b79e8a; 
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  position: relative;
+  z-index: 1002;
+}
+
+/* Меню */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 80px 24px 24px 24px;
+  box-sizing: border-box;
+}
+
+.mobile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.mobile-menu a {
+  text-decoration: none;
+  color: #222222;
+  font-size: 20px;
+  font-weight: 600;
+  display: block;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-menu a:hover {
+  color: #b79e8a; 
+}
