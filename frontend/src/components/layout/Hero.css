@@ -1,0 +1,84 @@
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+/* Великий аватар із подвійною рамкою */
+.profile-avatar img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 3px solid #b79e8a;
+  padding: 4px;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 16px 0 12px 0;
+  color: #111111;
+  
+}
+
+/* Список контактів */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+  color: #333333;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+}
+
+.info-item a {
+  color: #111111;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Кнопка Instagram */
+.instagram-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background-color: #f3ede7;
+  color: #111111;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+
+
+.profile-info .icon {
+  color: #b79e8a;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+
+.fa-location-dot, .fa-phone, .fa-clock {
+  color: #b79e8a;
+  font-size: 18px;
+}

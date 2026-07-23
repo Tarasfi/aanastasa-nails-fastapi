@@ -1,9 +1,11 @@
 .header {
   position: sticky;
   top: 0;
+  left: 0;
   z-index: 100;
   background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Верхній рядок */
@@ -11,17 +13,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 4px 20px;
   position: relative;
   z-index: 1002;
 }
 
 .header-logo img {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 2px solid #b79e8a; 
   object-fit: cover;
+  padding: 2px; 
+  background-color: #ffffff;
+  display: block
 }
 
 .header-actions {
