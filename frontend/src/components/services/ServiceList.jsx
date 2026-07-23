@@ -22,7 +22,7 @@ function ServiceList() {
 
   return (
     <div>
-      <h2>Послуги салону</h2>
+      <h2>Послуги секс</h2>
       <ul>
         {services.map((service) => (
           <ServiceCard key={service.id} service={service} />

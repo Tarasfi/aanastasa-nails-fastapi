@@ -19,10 +19,10 @@ function Header() {
 
         <div className="header-actions">
           <a href="tel:0980378911" className="header-phone">
-            📞 <span>098 037 89 11</span>
+            <i class="fa-solid fa-phone"></i> <span>098 876 14 42</span>
           </a>
           <button className="header-burger" aria-label="Menu" onClick={toggleMenu}>
-            {isMenuOpen ? '✕' : '☰'}
+            {isMenuOpen ? '✕' : <i class="fa-solid fa-bars"></i>}
           </button>
         </div>
       </div>

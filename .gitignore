@@ -10,9 +10,7 @@ venv/
 testdb.db
 alembic.ini
 
-
 #Frontend
-
 # Logs
 logs
 *.log
