@@ -25,7 +25,7 @@ function Hero() {
 
         <div className="info-item">
           <i className="fa-solid fa-clock"></i>
-          <span>Пн - Сб: 09:00 - 19:00</span>
+          <span>Пн - Сб: 09:00 - 21:00</span>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ function Hero() {
         rel="noopener noreferrer"
         className="instagram-btn"
       >
-        <i className="fa-brands fa-instagram"></i>фірко
+        <i className="fa-brands fa-instagram"></i>Instagram
       </a>
     </section>
   );
