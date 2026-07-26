@@ -9,11 +9,11 @@
 
 /* Великий аватар із подвійною рамкою */
 .profile-avatar img {
-  width: 130px;
-  height: 130px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
-  border: 3px solid #b79e8a;
-  padding: 4px;
+  border: 4px solid #b79e8a;
+  padding: 6px;
   object-fit: cover;
   display: block;
 }
@@ -81,4 +81,8 @@
 .fa-location-dot, .fa-phone, .fa-clock {
   color: #b79e8a;
   font-size: 18px;
+}
+
+.fa-instagram {
+  font-size: 20px;
 }
