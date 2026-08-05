@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres_db:
     image: postgres:15
@@ -30,6 +28,15 @@ services:
     env_file:
       - .env
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - web
 
 volumes:
   postgres_data:
