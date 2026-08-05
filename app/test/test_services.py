@@ -65,4 +65,4 @@ def test_delete_service(client, test_service):
 def test_delete_service_not_found(client, test_service):
     response = client.delete(f'/services/{test_service.id + 1000}')
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.json() == {"detail": "Service not found"}
+    assert response.json() == {"detail": "Послуги не знайдено"}
