@@ -30,7 +30,7 @@ async def create_booking(booking_request: BookingRequest, db: db_dependency):
     if booking_request.is_in_past():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Booking time cannot be in the past"
+            detail="Бронювання неможливе в минулому"
         )
 
     #Preventing the booking of non-existing service

@@ -53,7 +53,7 @@ def create_booking(booking_request: BookingRequest, db: Session):
     collision_check = check_time_collision(db, booking_request.booking_date, booking_request.booking_time, booking_end_time)
 
     if collision_check:
-        raise HTTPException(status_code=400, detail="Час зайнято.")
+        raise HTTPException(status_code=400, detail="Час зайнято")
 
 
     new_booking = Bookings(**booking_request.model_dump(), booking_end=booking_end_time)
@@ -85,7 +85,7 @@ def cancel_booking(db: Session, booking_id: int):
 
 def get_working_hours(booking_date):
     if booking_date.weekday() == 6:
-        raise HTTPException(status_code=400, detail="Ми не працюємо в неділю.")
+        raise HTTPException(status_code=400, detail="Ми не працюємо в неділю")
 
     if booking_date.weekday() == 5:
         start_time = datetime.combine(booking_date, SHIFT_START_SATURDAY)
@@ -107,7 +107,7 @@ def get_all_available_slots(db: Session, booking_date, service_id):
     start_time, end_time = get_working_hours(booking_date)
     duration = db.query(Services.duration_minutes).filter(Services.id == service_id).scalar()
     if duration is None:
-        raise HTTPException(status_code=404, detail="Послуги не знайдено.")
+        raise HTTPException(status_code=404, detail="Послуги не знайдено")
 
     result = []
     while start_time <= end_time:

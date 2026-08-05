@@ -58,7 +58,7 @@ def test_create_booking_conflict(client, test_service):
     data = response.json()
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert data == {'detail': 'Time is occupied.'}
+    assert data == {'detail': 'Час зайнято'}
 
 
 def test_create_booking_past(client, test_service):
@@ -74,7 +74,7 @@ def test_create_booking_past(client, test_service):
 
     response = client.post('/bookings', json=request_data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {'detail': 'Booking time cannot be in the past'}
+    assert response.json() == {'detail': 'Бронювання неможливе в минулому'}
 
 
 def test_create_booking_service_not_found(client):
@@ -90,7 +90,7 @@ def test_create_booking_service_not_found(client):
 
     response = client.post('/bookings', json=request_data)
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.json() == {'detail': 'Service not found'}
+    assert response.json() == {'detail': 'Послуги не знайдено'}
 
 
 #------------------------- TEST PATCH -------------------------
@@ -118,7 +118,7 @@ def test_patch_booking_not_found(client):
     }
     response = client.patch('/bookings/99999/status', json=request_data)
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.json() == {"detail": "Booking not found"}
+    assert response.json() == {"detail": "Запису не знайдено"}
 
 
 
@@ -133,4 +133,4 @@ def test_cancel_booking(client, test_booking):
 def test_delete_booking_not_found(client, test_booking):
     response = client.delete(f'/bookings/{test_booking.id + 100}')
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.json() == {"detail": "Booking not found"}
+    assert response.json() == {"detail": "Запису не знайдено"}
