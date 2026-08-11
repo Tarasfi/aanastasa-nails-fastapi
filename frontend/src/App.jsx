@@ -1,8 +1,9 @@
 import React from 'react';
 import Header from './components/layout/Header';
-import ServiceList from './components/services/ServiceList';
+import ServicesSection from './components/services/ServicesSection.jsx';
 import Hero from './components/layout/Hero';
 import InfoCarousel from './components/info/InfoCarousel';
+
 
 function App() {
   return (
@@ -10,9 +11,8 @@ function App() {
       <Header />
       <main>
         <Hero />
-        
+        <ServicesSection />
         <InfoCarousel />
-        <ServiceList />
       </main>
     </div>
   );
