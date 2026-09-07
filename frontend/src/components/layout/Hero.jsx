@@ -20,7 +20,7 @@ function Hero() {
 
         <div className="info-item">
           <i className="fa-solid fa-phone"></i>
-          <a href="tel:0980378911"> 098 876 14 42</a>
+          <a href="tel:0980378911"> +380 98 876 14 42</a>
         </div>
 
         <div className="info-item">
