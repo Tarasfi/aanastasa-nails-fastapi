@@ -8,8 +8,6 @@ from starlette import status
 from app.models.admin import Admin
 from app.routers.deps import get_current_admin
 
-
-
 router = APIRouter(
     tags=["Services"]
 )

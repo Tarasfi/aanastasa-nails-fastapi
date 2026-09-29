@@ -33,11 +33,6 @@ async def create_booking(booking_request: BookingRequest, db: db_dependency):
             detail="Бронювання неможливе в минулому"
         )
 
-    #Preventing the booking of non-existing service
-    service_existence = crud_service.get_service_by_id(db, booking_request.service_id)
-    if service_existence is None:
-        raise HTTPException(status_code=404, detail="Послуги не знайдено")
-
     return crud_booking.create_booking(booking_request, db)
 
 
@@ -63,9 +58,9 @@ async def cancel_booking(db: db_dependency, booking_id: int = Path(gt=0), curren
 
 #Get available slots
 @router.get("/available-slots", response_model=List[AvailableSlotResponse])
-async def get_available_slots(db: db_dependency, booking_date: date = Query(), service_id: int = Query()):
+async def get_available_slots(db: db_dependency, booking_date: date = Query(), service_ids: List[int] = Query()):
 
-    return crud_booking.get_all_available_slots(db,booking_date, service_id)
+    return crud_booking.get_all_available_slots(db, booking_date, service_ids)
 
 
 # @router.delete("/bookings/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)

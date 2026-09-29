@@ -15,7 +15,7 @@ def test_create_booking_success(client, test_service):
         "booking_date": "2100-06-02",
         "booking_time": "14:30:00",
         "status": "pending",
-        "service_id": test_service.id,
+        "service_ids": [test_service.id],
 
     }
 
@@ -27,7 +27,7 @@ def test_create_booking_success(client, test_service):
     assert data['booking_date'] == "2100-06-02"
     assert data['booking_time'] == "14:30:00"
     assert data['status'] == "pending"
-    assert data['service_id'] == test_service.id
+
 
 def test_create_booking_conflict(client, test_service):
     #First client creates the booking for 14:30
@@ -37,7 +37,7 @@ def test_create_booking_conflict(client, test_service):
         "booking_date": "2100-08-02",
         "booking_time": "14:30:00",
         "status": "pending",
-        "service_id": test_service.id,
+        "service_ids": [test_service.id],
 
     }
     first_response = client.post("/bookings", json=first_request_data)
@@ -50,7 +50,7 @@ def test_create_booking_conflict(client, test_service):
         "booking_date": "2100-08-02",
         "booking_time": "14:30:00",
         "status": "pending",
-        "service_id": test_service.id,
+        "service_ids": [test_service.id],
 
     }
 
@@ -68,7 +68,7 @@ def test_create_booking_past(client, test_service):
         "booking_date": "2006-06-02",
         "booking_time": "14:30:00",
         "status": "pending",
-        "service_id": test_service.id,
+        "service_ids": [test_service.id],
 
     }
 
@@ -84,13 +84,13 @@ def test_create_booking_service_not_found(client):
         "booking_date": "2100-06-02",
         "booking_time": "14:30:00",
         "status": "pending",
-        "service_id": 99999,
+        "service_ids": [99999],
 
     }
 
     response = client.post('/bookings', json=request_data)
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.json() == {'detail': 'Послуги не знайдено'}
+    assert response.json() == {'detail': 'Одну або декілька послуг не знайдено'}
 
 
 #------------------------- TEST PATCH -------------------------
