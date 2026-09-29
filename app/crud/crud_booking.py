@@ -1,9 +1,11 @@
+from typing import List
 from sqlalchemy.orm import Session
 from app.models.bookings import Bookings
 from app.models.services import Services
 from app.schemas.booking import BookingRequest, BookingStatusUpdate
 from datetime import datetime, time, timedelta
-from fastapi import HTTPException
+from fastapi import HTTPException, status
+
 
 
 def get_all_bookings(db: Session):
@@ -32,6 +34,7 @@ def validate_working_hours(booking_date, booking_time, booking_end):
         if not (booking_time >= SHIFT_START_WEEKDAYS and booking_end <= SHIFT_END_WEEKDAYS):
             raise HTTPException(status_code=400, detail="У будні ми працюємо з 09:00 до 21:00.")
 
+
 def check_time_collision(db, booking_date, start_time, end_time):
     collision = db.query(Bookings).filter(
         Bookings.booking_date == booking_date,
@@ -41,22 +44,46 @@ def check_time_collision(db, booking_date, start_time, end_time):
     return collision
 
 
+def get_services_by_ids(db: Session, service_ids: List[int]) -> List[Services]:
+    services = db.query(Services).filter(Services.id.in_(service_ids)).all()
+    if len(services) != len(service_ids):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Одну або декілька послуг не знайдено"
+        )
+    return services
+
+
+def calculate_booking_end_time(booking_request: BookingRequest, services: List[Services]):
+    total_duration = sum(s.duration_minutes for s in services)
+    start_dt = datetime.combine(booking_request.booking_date, booking_request.booking_time)
+    end_dt = start_dt + timedelta(minutes=total_duration)
+    return end_dt.time()
 
 def create_booking(booking_request: BookingRequest, db: Session):
-    duration = db.query(Services.duration_minutes).filter(Services.id == booking_request.service_id).scalar()
-    start_dt = datetime.combine(booking_request.booking_date, booking_request.booking_time)
-    end_dt = start_dt + timedelta(minutes=duration)
-    booking_end_time = end_dt.time()
+    # 1. get and validate a service
+    services = get_services_by_ids(db, booking_request.service_ids)
 
+    # 2. endtime calculation
+    booking_end_time = calculate_booking_end_time(booking_request, services)
+
+    # 3. is work hours?
     validate_working_hours(booking_request.booking_date, booking_request.booking_time, booking_end_time)
 
-    collision_check = check_time_collision(db, booking_request.booking_date, booking_request.booking_time, booking_end_time)
+    # 4. is collapsed?
+    if check_time_collision(db, booking_request.booking_date, booking_request.booking_time, booking_end_time):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Час зайнято"
+        )
 
-    if collision_check:
-        raise HTTPException(status_code=400, detail="Час зайнято")
 
-
-    new_booking = Bookings(**booking_request.model_dump(), booking_end=booking_end_time)
+    booking_data = booking_request.model_dump(exclude={"service_ids"})
+    new_booking = Bookings(
+        **booking_data,
+        booking_end=booking_end_time,
+        services=services
+    )
 
     db.add(new_booking)
     db.commit()
@@ -101,27 +128,30 @@ def is_slot_occupied(start_time, potential_end, occupied_slots):
     return any(start_time.time() < slot.booking_end and potential_end.time() > slot.booking_time for slot in occupied_slots)
 
 
-
-def get_all_available_slots(db: Session, booking_date, service_id):
+def get_all_available_slots(db: Session, booking_date, service_ids: List[int]):
     occupied_slots = db.query(Bookings).filter(Bookings.booking_date == booking_date).all()
     start_time, end_time = get_working_hours(booking_date)
-    duration = db.query(Services.duration_minutes).filter(Services.id == service_id).scalar()
-    if duration is None:
-        raise HTTPException(status_code=404, detail="Послуги не знайдено")
+
+    #Total duration
+    durations = db.query(Services.duration_minutes).filter(Services.id.in_(service_ids)).all()
+    if len(durations) != len(service_ids):
+        raise HTTPException(status_code=404, detail="Одну або декілька послуг не знайдено")
+
+    total_duration = sum(d[0] for d in durations)
 
     result = []
     while start_time <= end_time:
-        potential_end = start_time + timedelta(minutes=duration)
+        potential_end = start_time + timedelta(minutes=total_duration)
         is_occupied = is_slot_occupied(start_time, potential_end, occupied_slots)
 
         if start_time < datetime.now():
             is_occupied = True
+
         if potential_end <= end_time:
-            result.append({"time": start_time.time().strftime("%H:%M"),
-                                   "occupied": is_occupied})
+            result.append({"time": start_time.time().strftime("%H:%M"), "occupied": is_occupied})
         else:
-            result.append({"time": start_time.time().strftime("%H:%M"),
-                                   "occupied": True})
+            result.append({"time": start_time.time().strftime("%H:%M"), "occupied": True})
+
         start_time += timedelta(minutes=30)
 
     return result

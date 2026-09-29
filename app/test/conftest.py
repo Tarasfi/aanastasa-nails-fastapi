@@ -88,7 +88,7 @@ def test_booking(db_session, test_service):
                        booking_date=dt.date.fromisoformat('2026-06-02'),
                        booking_time=dt.time.fromisoformat('14:30:00'),
                        status="pending",
-                       service_id=test_service.id)
+                       services=[test_service])
 
     db_session.add(booking)
     db_session.commit()

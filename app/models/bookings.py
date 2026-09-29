@@ -1,6 +1,13 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Time
-
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Time, Table
+from sqlalchemy.orm import relationship
+#Many to many table
+booking_services = Table(
+    "booking_services",
+    Base.metadata,
+    Column("booking_id", Integer, ForeignKey("bookings.id", ondelete="CASCADE"), primary_key=True),
+    Column("service_id", Integer, ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+)
 
 class Bookings(Base):
     __tablename__ = "bookings"
@@ -16,4 +23,4 @@ class Bookings(Base):
 
     status = Column(String, default="pending")
 
-    service_id = Column(Integer, ForeignKey("services.id"))
+    services = relationship("Services", secondary=booking_services, backref="bookings")

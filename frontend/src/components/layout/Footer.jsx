@@ -39,9 +39,6 @@ export default function Footer({ onBookClick }) {
     allowFullScreen
   ></iframe>
 </div>
-
-
-
         {/* Контактні дані */}
         <div className="contacts-block">
           {/* Телефон */}

@@ -1,4 +1,5 @@
 from datetime import date, time
+from typing import List
 from pydantic import BaseModel, Field
 from enum import Enum
 import datetime
@@ -15,7 +16,7 @@ class BookingRequest(BaseModel):
     client_phone: str
     booking_date: date
     booking_time: time
-    service_id: int
+    service_ids: List[int] = Field(min_length=1)
 
 
     # Preventing bookings in the past
@@ -43,5 +44,5 @@ class AvailableSlotResponse(BaseModel):
 #   "booking_date": "2026-04-30",
 #   "booking_time": "16:00:19.793Z",
 #   "status": "pending",
-#   "service_id": 1
+#   "service_ids": [1]
 # }
