@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './components/layout/Header';
-import ServicesSection from './components/services/ServicesSection.jsx';
+import BookingManager from './components/booking/BookingManager'
 import Hero from './components/layout/Hero';
 import InfoCarousel from './components/info/InfoCarousel';
 import Footer from './components/layout/Footer.jsx';
@@ -11,7 +11,7 @@ function App() {
       <Header />
       <main>
         <Hero />
-        <ServicesSection />
+        <BookingManager />
         <InfoCarousel />
         <Footer />
       </main>
