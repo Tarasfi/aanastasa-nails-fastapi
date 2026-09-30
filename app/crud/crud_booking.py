@@ -85,9 +85,9 @@ def create_booking(booking_request: BookingRequest, db: Session):
         services=services
     )
 
-    db.add(new_booking)
-    db.commit()
-    db.refresh(new_booking)
+    # db.add(new_booking)
+    # db.commit()
+    # db.refresh(new_booking)
     return new_booking
 
 
