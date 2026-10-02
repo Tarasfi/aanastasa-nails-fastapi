@@ -1,7 +1,7 @@
 from app.database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Time, Table
 from sqlalchemy.orm import relationship
-#Many to many table
+#Many-to-many table
 booking_services = Table(
     "booking_services",
     Base.metadata,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ServicesSection.css';
 
-const API = "http://localhost:8000";
+const API = "http://192.168.0.102:8000";
 
 function formatDuration(minutes) {
   if (!minutes) return '';

@@ -21,7 +21,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             detail="Неправильний логін або пароль",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+    в 
     if not admin:
         raise wrong_login_or_password_error
 

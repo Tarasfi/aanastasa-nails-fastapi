@@ -4,7 +4,6 @@
   left: 0;
   z-index: 100;
   background-color: #ffffff;
-
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -14,6 +13,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 4px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
   position: relative;
   z-index: 1002;
 }
@@ -26,7 +27,7 @@
   object-fit: cover;
   padding: 2px; 
   background-color: #ffffff;
-  display: block
+  display: block;
 }
 
 .header-actions {
@@ -58,7 +59,32 @@
   z-index: 1002;
 }
 
-/* Меню */
+/* Навігація для десктопа (за замовчуванням прихована на мобілках) */
+.desktop-menu {
+  display: none;
+}
+
+.desktop-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+
+.desktop-menu a {
+  text-decoration: none;
+  color: #222222;
+  font-size: 15px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.desktop-menu a:hover {
+  color: #b79e8a;
+}
+
+/* Мобільне меню */
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -99,4 +125,20 @@
 
 .mobile-menu a:hover {
   color: #b79e8a; 
+}
+
+/* ==========================================
+   ДЕСКТОПНІ СТИЛІ (екрани від 768px)
+   ========================================== */
+@media (min-width: 768px) {
+  /* Ховаємо бургер та мобільне меню на ПК */
+  .header-burger,
+  .mobile-menu {
+    display: none !important;
+  }
+
+  /* Показуємо десктопне меню в один рядок */
+  .desktop-menu {
+    display: block;
+  }
 }
