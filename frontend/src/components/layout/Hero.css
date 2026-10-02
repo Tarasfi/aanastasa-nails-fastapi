@@ -1,3 +1,6 @@
+/* ==========================================
+   МОБІЛЬНІ СТИЛІ (за замовчуванням)
+   ========================================== */
 .profile-section {
   display: flex;
   flex-direction: column;
@@ -5,44 +8,52 @@
   padding: 24px 16px;
   text-align: center;
   background-color: #ffffff;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 /* Великий аватар із подвійною рамкою */
 .profile-avatar img {
-  width: 160px;
-  height: 160px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  border: 4px solid #b79e8a;
-  padding: 6px;
+  border: 3px solid #b79e8a;
+  padding: 5px;
   object-fit: cover;
   display: block;
+  box-sizing: border-box;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .profile-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   margin: 16px 0 12px 0;
   color: #111111;
-  
 }
 
 /* Список контактів */
 .profile-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   font-size: 15px;
   color: #333333;
-  margin-bottom: 16px;
-  align-items: flex-start;
+  margin-bottom: 20px;
+  align-items: flex-start; /* Вирівнювання іконка+текст по лівому краю всередині блоку */
 }
 
 .info-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  
+  gap: 10px;
+  text-align: left;
 }
 
 .info-item a {
@@ -56,33 +67,71 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 20px;
+  padding: 9px 22px;
   background-color: #f3ede7;
   color: #111111;
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
   border-radius: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-
-
-
-.profile-info .icon {
-  color: #b79e8a;
-  font-size: 16px;
-  width: 20px;
-  text-align: center;
+.instagram-btn:hover {
+  background-color: #e6ded7;
 }
 
-
-.fa-location-dot, .fa-phone, .fa-clock {
+/* Іконки */
+.fa-location-dot,
+.fa-phone,
+.fa-clock {
   color: #b79e8a;
   font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .fa-instagram {
-  font-size: 20px;
+  font-size: 18px;
+}
+
+/* ==========================================
+   ДЕСКТОПНІ СТИЛІ (ПК / Планшети)
+   ========================================== */
+@media (min-width: 768px) {
+  .profile-section {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 40px 32px;
+    gap: 48px;
+  }
+
+  .profile-avatar img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .profile-content {
+    align-items: flex-start;
+    width: auto;
+  }
+
+  .profile-title {
+    font-size: 32px;
+    margin: 0 0 16px 0;
+  }
+
+  .profile-info {
+    margin-bottom: 24px;
+    gap: 12px;
+  }
+
+  .instagram-btn {
+    margin-bottom: 0;
+  }
 }

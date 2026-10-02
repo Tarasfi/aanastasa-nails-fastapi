@@ -10,24 +10,24 @@ function Header() {
 
   return (
     <header className="header">
-      
       <div className="header-top">
         <div className="header-logo">
-          
-          <img src="/logo1.png" alt="Aanastasa nails Logo" /> 
+          <img src="/logo1.png" alt="Aanastasa nails Logo" />
         </div>
 
         <div className="header-actions">
-          <a href="tel:0980378911" className="header-phone">
-            <i class="fa-solid fa-phone"></i> <span>098 876 14 42</span>
+          <a href="tel:+380988761442" className="header-phone">
+            <i className="fa-solid fa-phone"></i> <span>098 876 14 42</span>
           </a>
+          
+          {/* Бургер-кнопка (прихована на ПК через CSS) */}
           <button className="header-burger" aria-label="Menu" onClick={toggleMenu}>
-            {isMenuOpen ? '✕' : <i class="fa-solid fa-bars"></i>}
+            {isMenuOpen ? '✕' : <i className="fa-solid fa-bars"></i>}
           </button>
         </div>
       </div>
 
-      
+      {/* Мобільне випадаюче меню */}
       {isMenuOpen && (
         <nav className="mobile-menu">
           <ul>
