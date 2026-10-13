@@ -9,7 +9,6 @@ const images = [
   '/fifthExample.jpg',
 ];
 
-// Клонуємо перше фото в кінець для безшовного плавного переходу
 const extendedImages = [...images, images[0]];
 
 function InfoCarousel() {
@@ -19,14 +18,10 @@ function InfoCarousel() {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const isInteracting = useRef(false);
-  
-  // 🔒 Запобіжник від швидких/подвійних свайпів
   const isTransitioning = useRef(false); 
 
-  // Автопрокрутка
   useEffect(() => {
     const timer = setInterval(() => {
-      // Якщо ми не торкаємось екрану і не йде анімація — крутимо далі
       if (!isInteracting.current && !isTransitioning.current) {
         handleNext();
       }
@@ -36,7 +31,6 @@ function InfoCarousel() {
   }, [currentIndex]);
 
   const handleNext = () => {
-    // Якщо анімація ще йде, або ми вже на останньому клоні — ігноруємо свайп
     if (isTransitioning.current || currentIndex >= images.length) return;
     
     isTransitioning.current = true;
@@ -45,14 +39,12 @@ function InfoCarousel() {
   };
 
   const handlePrev = () => {
-    // Якщо анімація ще йде — ігноруємо свайп
     if (isTransitioning.current) return;
     
     isTransitioning.current = true;
     setIsAnimated(true);
     
     if (currentIndex === 0) {
-      // Якщо ми на 0-му і гортаємо назад — непомітно стрибаємо на останнє фото
       setIsAnimated(false);
       setCurrentIndex(images.length);
       setTimeout(() => {
@@ -64,17 +56,15 @@ function InfoCarousel() {
     }
   };
 
-  // 🪄 Знімаємо блокування, коли закінчилася анімація, і робимо безшовний стрибок
   const handleTransitionEnd = () => {
-    isTransitioning.current = false; // Дозволяємо свайпати знову
+    isTransitioning.current = false;
     
     if (currentIndex >= images.length) {
-      setIsAnimated(false); // Вимикаємо анімацію
-      setCurrentIndex(0);   // Стрибаємо на оригінальний 0-й слайд
+      setIsAnimated(false);
+      setCurrentIndex(0);
     }
   };
 
-  // Тач-свайпи
   const handleTouchStart = (e) => {
     isInteracting.current = true;
     touchStartX.current = e.targetTouches[0].clientX;
@@ -101,14 +91,21 @@ function InfoCarousel() {
     }, 2000);
   };
 
-return (
+  return (
     <section className="info-carousel-section">
-      {/* Новий заголовок замість старого тексту */}
       <div className="info-text">
-        <h2 className="info-title">Мої роботи</h2>
+        <h2 className="info-title">Приклади робіт</h2>
       </div>
 
       <div className="carousel-container">
+        {/* Кнопки перемикання для ПК */}
+        <button className="carousel-arrow prev" onClick={handlePrev} aria-label="Попередній слайд">
+          ‹
+        </button>
+        <button className="carousel-arrow next" onClick={handleNext} aria-label="Наступний слайд">
+          ›
+        </button>
+
         <div
           className="carousel-track"
           style={{
