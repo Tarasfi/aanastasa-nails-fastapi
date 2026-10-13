@@ -1,5 +1,4 @@
 .footer {
-  background-color: #faf8f5;
   border-top: 1px solid #f0eae1;
   padding: 36px 20px 24px 20px;
   display: flex;
@@ -9,47 +8,36 @@
   font-family: inherit;
 }
 
-/* Секція "Як нас знайти" */
 .location-section {
   width: 100%;
-  max-width: 440px;
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
-  text-align: left;
 }
 
+/* Заголовок по центру */
 .location-title {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
   color: #111111;
-  margin: 20px;
+  margin: 0 0 28px 0;
   text-align: center;
 }
 
-/* Карта */
-.map-card {
+/* Контейнер для контактів і карти */
+.location-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   width: 100%;
-  height: 350px;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 12px;
 }
-
-.map-iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  pointer-events: auto; /* Дозволяє кліки, зум і скрол карти */
-}
-
-
 
 /* Контакти */
 .contacts-block {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 16px;
+  width: 100%;
 }
 
 .contact-item {
@@ -59,7 +47,7 @@
 }
 
 .contact-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #888888;
 }
 
@@ -67,12 +55,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .contact-icon {
   color: #b79e8a;
-  font-size: 15px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
@@ -88,47 +76,23 @@
   color: #222222;
 }
 
-.btn-copy {
-  background: none;
-  border: none;
-  color: #888888;
-  cursor: pointer;
-  padding: 2px 6px;
-  display: flex;
-  align-items: center;
-  font-size: 13px;
+/* Карта */
+.map-card {
+  width: 100%;
+  height: 280px; /* Трохи зменшили висоту */
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.copied-icon {
-  color: #2e7d32;
+.map-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: auto;
 }
 
-/* Кнопка онлайн запису */
-.booking-btn-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
-}
-
-.btn-online-book {
-  background-color: #b79e8a;
-  color: #ffffff;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn-online-book:active {
-  background-color: #a38a76;
-  transform: scale(0.97);
-}
-
-/* Іконки соцмереж */
+/* Соцмережі */
 .social-icons {
   display: flex;
   align-items: center;
@@ -156,43 +120,46 @@
   text-decoration: none;
   transition: all 0.2s ease;
   background-color: #ffffff;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.social-link:active {
+.social-link:hover {
   background-color: #b79e8a;
   color: #ffffff;
-  transform: scale(0.95);
 }
 
-/* Навігаційне меню */
-.footer-menu {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px 24px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu-link {
-  color: #111111;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.menu-link:hover,
-.menu-link:active {
-  color: #b79e8a;
-}
-
-/* Копирайт */
 .footer-copyright {
   font-size: 12px;
   color: #888888;
   margin: 0;
   text-align: center;
+}
+
+/* --- АДАПТИВНІСТЬ ДЛЯ ПК (від 768px) --- */
+@media (min-width: 768px) {
+  .location-title {
+    font-size: 32px;
+    margin-bottom: 36px;
+    text-align: center; /* Центруємо заголовок на ПК */
+  }
+
+  .location-content {
+    flex-direction: row;
+    align-items: stretch; /* Розтягує контакти по висоті карти */
+    justify-content: space-between;
+    gap: 48px;
+  }
+
+  .contacts-block {
+    flex: 1;
+    max-width: 400px;
+    height: 100%;
+    justify-content: space-between; /* Рівномірно розподіляє контакти по всій висоті */
+  }
+
+  .map-card {
+    flex: 1;
+    max-width: 520px; /* Трохи сплющили карту за шириною */
+    min-width: 400px;
+    height: 260px;    /* Трохи зменшили висоту карти */
+  }
 }

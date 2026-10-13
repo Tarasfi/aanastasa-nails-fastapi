@@ -2,6 +2,8 @@
   padding: 16px 20px 40px 20px;
   background-color: #ffffff;
   font-family: inherit;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .services-main-title {
@@ -20,6 +22,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-bottom: 8px;
+  padding: 8px 0;
 }
 
 .accordion-title {
@@ -34,11 +37,11 @@
   color: #555555;
   transition: transform 0.3s ease;
   display: inline-block;
-  transform: rotate(-90deg); /* Стрілка вбік/вгору */
+  transform: rotate(-90deg);
 }
 
 .accordion-arrow.open {
-  transform: rotate(90deg); /* Стрілка вниз */
+  transform: rotate(90deg);
 }
 
 /* Плавний розгортач (CSS Grid transition) */
@@ -56,7 +59,7 @@
   overflow: hidden;
 }
 
-/* Список послуг */
+/* Список послуг (Мобільна версія) */
 .services-list {
   display: flex;
   flex-direction: column;
@@ -72,6 +75,12 @@
 
 .service-item:last-child {
   border-bottom: none;
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .service-title {
@@ -132,8 +141,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.btn-service-book:active {
+.btn-service-book:hover {
   background-color: #b79e8a;
+  color: #ffffff;
+}
+
+.btn-service-book:active {
+  background-color: #a38976;
+  border-color: #a38976;
   color: #ffffff;
 }
 
@@ -143,4 +158,77 @@
   font-size: 14px;
   color: #666666;
   text-align: center;
+}
+
+/* =========================================================
+   АДАПТИВНІ СТИЛІ ДЛЯ ПК ТА ПЛАНШЕТІВ (від 768px)
+   ========================================================= */
+@media (min-width: 768px) {
+  .services-container {
+    padding: 32px 40px;
+  }
+
+  .services-main-title {
+    font-size: 28px;
+    margin-bottom: 32px;
+  }
+
+  /* Вимикаємо акордеон на ПК: курсор звичайний, стрілка прихована */
+  .accordion-header {
+    cursor: default;
+    margin-bottom: 16px;
+  }
+
+  .accordion-title {
+    font-size: 20px;
+  }
+
+  .accordion-arrow {
+    display: none; /* Приховуємо стрілочку на десктопі */
+  }
+
+  /* Примусово завжди розгортаємо акордеон на ПК */
+  .accordion-collapse {
+    grid-template-rows: 1fr !important;
+  }
+
+  /* Перетворюємо список послуг на сітку карток */
+  .services-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    padding-top: 16px;
+  }
+
+  .service-item {
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
+    padding: 20px;
+    justify-content: space-between;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .service-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .service-item:last-child {
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .service-title {
+    font-size: 18px;
+  }
+
+  .service-description-block {
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  .btn-service-book {
+    margin-top: auto;
+  }
 }

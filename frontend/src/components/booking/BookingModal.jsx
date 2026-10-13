@@ -367,7 +367,7 @@ export default function BookingModal({ service, onClose }) {
                     className="btn-primary"
                     onClick={() => setStep("datetime")}
                   >
-                    Далі →
+                    Далі
                   </button>
                 </div>
               </>
