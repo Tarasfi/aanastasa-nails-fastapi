@@ -1,5 +1,5 @@
 from datetime import date, time
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field
 from enum import Enum
 import datetime
@@ -34,6 +34,29 @@ class AvailableSlotResponse(BaseModel):
     time: str
     occupied: bool
 
+
+class ServiceOut(BaseModel):
+    id: int
+    name: str
+    price: int
+    duration_minutes: int
+
+    class Config:
+        from_attributes = True
+
+
+class BookingResponse(BaseModel):
+    id: int
+    client_name: str
+    client_phone: str
+    booking_date: date
+    booking_time: time
+    booking_end: Optional[time] = None
+    status: str
+    services: List[ServiceOut] = []
+
+    class Config:
+        from_attributes = True
 
 
 # Example

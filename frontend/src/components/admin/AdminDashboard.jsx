@@ -7,7 +7,7 @@ export default function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
   const [services, setServices] = useState([]);
-  const [servicesMap, setServicesMap] = useState({}); // Словник id -> {name, price}
+  const [servicesMap, setServicesMap] = useState({}); // Словник id -> {name, price, duration_minutes}
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -48,7 +48,6 @@ export default function AdminDashboard({ onLogout }) {
     return res;
   };
 
-  // Спочатку завантажуємо послуги, щоб створити картотеку для зпоставлення ID
   useEffect(() => {
     fetchServicesMap();
   }, []);
@@ -72,7 +71,6 @@ export default function AdminDashboard({ onLogout }) {
     };
   }, [activeTab]);
 
-  // Завантаження послуг для створення словника { id: { name, price } }
   const fetchServicesMap = async () => {
     try {
       const res = await fetch(`${API_URL}/services`);
@@ -80,7 +78,6 @@ export default function AdminDashboard({ onLogout }) {
         const data = await res.json();
         setServices(data);
         
-        // Створюємо карту id -> об'єкт послуги
         const map = {};
         data.forEach((s) => {
           map[s.id] = s;
@@ -104,19 +101,68 @@ export default function AdminDashboard({ onLogout }) {
     }
   };
 
-  // 1. Обчислення загальної ціни на фронтенді
+  // Хелпер для форматування часу HH:MM:SS -> HH:MM
+  const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    const parts = timeStr.split(':');
+    if (parts.length >= 2) {
+      return `${parts[0]}:${parts[1]}`;
+    }
+    return timeStr;
+  };
+
+  // Хелпер для виводу дати та інтервалу часу (наприклад: "11:00" або "11:00 – 12:30")
+  const renderDateTime = (b) => {
+    const startTime = formatTime(b.booking_time);
+    const endTime = formatTime(b.booking_end);
+
+    if (endTime) {
+      return `${b.booking_date} (${startTime} – ${endTime})`;
+    }
+    return `${b.booking_date} о ${startTime}`;
+  };
+
+  // Розрахунок загальної тривалості бронювання у хвилинах
+  const calculateTotalDuration = (b) => {
+    // 1. Через масив ID послуг (service_ids)
+    if (Array.isArray(b.service_ids) && b.service_ids.length > 0) {
+      const sum = b.service_ids.reduce((total, id) => {
+        const service = servicesMap[id];
+        return total + (service ? Number(service.duration_minutes) || 0 : 0);
+      }, 0);
+      if (sum > 0) return `${sum} хв.`;
+    }
+
+    // 2. Через масив об'єктів послуг (services)
+    if (Array.isArray(b.services) && b.services.length > 0) {
+      const sum = b.services.reduce((total, s) => {
+        const dur = typeof s === 'object' ? s.duration_minutes : servicesMap[s]?.duration_minutes;
+        return total + (Number(dur) || 0);
+      }, 0);
+      if (sum > 0) return `${sum} хв.`;
+    }
+
+    // 3. Запасний варіант: різниця між booking_time та booking_end
+    if (b.booking_time && b.booking_end) {
+      const [startH, startM] = b.booking_time.split(':').map(Number);
+      const [endH, endM] = b.booking_end.split(':').map(Number);
+      const diffMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+      if (diffMinutes > 0) return `${diffMinutes} хв.`;
+    }
+
+    return '-';
+  };
+
   const calculateTotalPrice = (b) => {
     if (b.total_price !== undefined && b.total_price !== null && b.total_price > 0) {
       return b.total_price;
     }
-    // Якщо прийшов масив ID (service_ids)
     if (Array.isArray(b.service_ids) && b.service_ids.length > 0) {
       return b.service_ids.reduce((sum, id) => {
         const service = servicesMap[id];
         return sum + (service ? Number(service.price) || 0 : 0);
       }, 0);
     }
-    // Якщо прийшов масив об'єктів services
     if (Array.isArray(b.services) && b.services.length > 0) {
       return b.services.reduce((sum, s) => {
         const price = typeof s === 'object' ? s.price : (servicesMap[s]?.price || 0);
@@ -126,16 +172,13 @@ export default function AdminDashboard({ onLogout }) {
     return 0;
   };
 
-  // 2. Форматування списку послуг на фронтенді
   const renderServicesList = (b) => {
-    // Якщо масив service_ids [1, 2]
     if (Array.isArray(b.service_ids) && b.service_ids.length > 0) {
       const names = b.service_ids
         .map((id) => servicesMap[id]?.name)
         .filter(Boolean);
       return names.length > 0 ? names.join(', ') : 'Завантаження послуг...';
     }
-    // Якщо масив об'єктів services [{name: '...'}, ...]
     if (Array.isArray(b.services) && b.services.length > 0) {
       return b.services
         .map((s) => (typeof s === 'object' ? s.name : servicesMap[s]?.name || s))
@@ -155,7 +198,6 @@ export default function AdminDashboard({ onLogout }) {
       if (!res.ok) throw new Error('Не вдалося завантажити записи');
       const data = await res.json();
 
-      // Сортування по даті та часу (від найновіших)
       const sortedData = [...data].sort((a, b) => {
         const dateA = new Date(`${a.booking_date}T${a.booking_time || '00:00'}`);
         const dateB = new Date(`${b.booking_date}T${b.booking_time || '00:00'}`);
@@ -319,6 +361,7 @@ export default function AdminDashboard({ onLogout }) {
                       <th>Клієнт</th>
                       <th>Телефон</th>
                       <th>Обрані послуги</th>
+                      <th>Тривалість</th>
                       <th>Сума</th>
                       <th>Статус</th>
                       <th>Дії</th>
@@ -327,7 +370,7 @@ export default function AdminDashboard({ onLogout }) {
                   <tbody>
                     {bookings.map((b) => (
                       <tr key={b.id}>
-                        <td className="bold-cell">{b.booking_date} {b.booking_time}</td>
+                        <td className="bold-cell">{renderDateTime(b)}</td>
                         <td>{b.client_name}</td>
                         <td>
                           <a href={`tel:${b.client_phone}`} className="phone-link">
@@ -336,6 +379,9 @@ export default function AdminDashboard({ onLogout }) {
                         </td>
                         <td className="services-cell">
                           {renderServicesList(b)}
+                        </td>
+                        <td>
+                          {calculateTotalDuration(b)}
                         </td>
                         <td className="price-cell">
                           ₴{calculateTotalPrice(b)}
@@ -367,7 +413,7 @@ export default function AdminDashboard({ onLogout }) {
                     ))}
                     {bookings.length === 0 && (
                       <tr>
-                        <td colSpan="7" style={{ textAlign: 'center' }}>Записів поки немає</td>
+                        <td colSpan="8" style={{ textAlign: 'center' }}>Записів поки немає</td>
                       </tr>
                     )}
                   </tbody>
