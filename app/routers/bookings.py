@@ -2,7 +2,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from starlette import status
 from app.database import get_db
-from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotResponse
+from app.schemas.booking import BookingRequest, BookingStatusUpdate, AvailableSlotResponse, BookingResponse
 from sqlalchemy.orm import Session
 from app.crud import crud_booking
 from app.crud import crud_service
@@ -19,7 +19,7 @@ router = APIRouter(
 db_dependency = Annotated[Session, Depends(get_db)]
 
 #Read all bookings
-@router.get("/bookings", status_code=status.HTTP_200_OK)
+@router.get("/bookings", response_model=List[BookingResponse], status_code=status.HTTP_200_OK)
 async def get_all_bookings(db: db_dependency, current_admin: Admin = Depends(get_current_admin)):
     return crud_booking.get_all_bookings(db)
 
