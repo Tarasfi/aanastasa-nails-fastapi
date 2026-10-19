@@ -10,4 +10,5 @@ class Services(Base):
     description = Column(String)
     price = Column(Integer)
     duration_minutes = Column(Integer)
+    category = Column(String, default="manicure")
 

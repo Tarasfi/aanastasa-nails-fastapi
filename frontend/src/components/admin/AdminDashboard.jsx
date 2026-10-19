@@ -7,17 +7,19 @@ export default function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('bookings');
   const [bookings, setBookings] = useState([]);
   const [services, setServices] = useState([]);
-  const [servicesMap, setServicesMap] = useState({}); // Словник id -> {name, price, duration_minutes}
+  const [servicesMap, setServicesMap] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
   const [newBookingAlert, setNewBookingAlert] = useState(null);
 
+  // 1. Встановлюємо "manicure" за замовчуванням
   const [newService, setNewService] = useState({
     name: '',
     price: '',
     duration_minutes: '',
     description: '',
+    category: 'manicure', 
   });
 
   const token = localStorage.getItem('admin_token');
@@ -101,7 +103,6 @@ export default function AdminDashboard({ onLogout }) {
     }
   };
 
-  // Хелпер для форматування часу HH:MM:SS -> HH:MM
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
     const parts = timeStr.split(':');
@@ -111,7 +112,6 @@ export default function AdminDashboard({ onLogout }) {
     return timeStr;
   };
 
-  // Хелпер для виводу дати та інтервалу часу (наприклад: "11:00" або "11:00 – 12:30")
   const renderDateTime = (b) => {
     const startTime = formatTime(b.booking_time);
     const endTime = formatTime(b.booking_end);
@@ -122,9 +122,7 @@ export default function AdminDashboard({ onLogout }) {
     return `${b.booking_date} о ${startTime}`;
   };
 
-  // Розрахунок загальної тривалості бронювання у хвилинах
   const calculateTotalDuration = (b) => {
-    // 1. Через масив ID послуг (service_ids)
     if (Array.isArray(b.service_ids) && b.service_ids.length > 0) {
       const sum = b.service_ids.reduce((total, id) => {
         const service = servicesMap[id];
@@ -133,7 +131,6 @@ export default function AdminDashboard({ onLogout }) {
       if (sum > 0) return `${sum} хв.`;
     }
 
-    // 2. Через масив об'єктів послуг (services)
     if (Array.isArray(b.services) && b.services.length > 0) {
       const sum = b.services.reduce((total, s) => {
         const dur = typeof s === 'object' ? s.duration_minutes : servicesMap[s]?.duration_minutes;
@@ -142,7 +139,6 @@ export default function AdminDashboard({ onLogout }) {
       if (sum > 0) return `${sum} хв.`;
     }
 
-    // 3. Запасний варіант: різниця між booking_time та booking_end
     if (b.booking_time && b.booking_end) {
       const [startH, startM] = b.booking_time.split(':').map(Number);
       const [endH, endM] = b.booking_end.split(':').map(Number);
@@ -277,11 +273,13 @@ export default function AdminDashboard({ onLogout }) {
   const handleCreateService = async (e) => {
     e.preventDefault();
     try {
+      // 2. Додаємо категорію в payload
       const payload = {
         name: newService.name,
         price: Number(newService.price),
         duration_minutes: Number(newService.duration_minutes),
         description: newService.description || null,
+        category: newService.category || 'manicure',
       };
 
       const res = await authFetch(`${API_URL}/services`, {
@@ -294,7 +292,15 @@ export default function AdminDashboard({ onLogout }) {
 
       setServices((prev) => [...prev, createdService]);
       setServicesMap((prev) => ({ ...prev, [createdService.id]: createdService }));
-      setNewService({ name: '', price: '', duration_minutes: '', description: '' });
+      
+      // Скидаємо форму назад
+      setNewService({
+        name: '',
+        price: '',
+        duration_minutes: '',
+        description: '',
+        category: 'manicure',
+      });
     } catch (err) {
       alert(err.message);
     }
@@ -333,13 +339,13 @@ export default function AdminDashboard({ onLogout }) {
           className={activeTab === 'bookings' ? 'active' : ''} 
           onClick={() => setActiveTab('bookings')}
         >
-          📅 Записи ({bookings.length})
+          Записи ({bookings.length})
         </button>
         <button 
           className={activeTab === 'services' ? 'active' : ''} 
           onClick={() => setActiveTab('services')}
         >
-          💅 Послуги
+          Послуги
         </button>
       </nav>
 
@@ -435,6 +441,18 @@ export default function AdminDashboard({ onLogout }) {
                 value={newService.name}
                 onChange={(e) => setNewService({ ...newService, name: e.target.value })}
               />
+
+              {/* 3. Селектор категорії */}
+              <select
+                required
+                value={newService.category}
+                onChange={(e) => setNewService({ ...newService, category: e.target.value })}
+                className="category-select"
+              >
+                <option value="manicure">Манікюр</option>
+                <option value="pedicure">Педикюр</option>
+              </select>
+
               <input
                 type="number"
                 placeholder="Ціна (грн)"
@@ -467,6 +485,7 @@ export default function AdminDashboard({ onLogout }) {
                   <thead>
                     <tr>
                       <th>Назва</th>
+                      <th>Категорія</th>
                       <th>Ціна</th>
                       <th>Тривалість</th>
                       <th>Опис</th>
@@ -477,6 +496,9 @@ export default function AdminDashboard({ onLogout }) {
                     {services.map((s) => (
                       <tr key={s.id}>
                         <td className="bold-cell">{s.name}</td>
+                        <td>
+                          {s.category === 'pedicure' ? 'Педикюр' : 'Манікюр'}
+                        </td>
                         <td className="price-cell">₴{s.price}</td>
                         <td>{s.duration_minutes} хв.</td>
                         <td>{s.description || '-'}</td>
@@ -492,7 +514,7 @@ export default function AdminDashboard({ onLogout }) {
                     ))}
                     {services.length === 0 && (
                       <tr>
-                        <td colSpan="5" style={{ textAlign: 'center' }}>Послуг поки немає</td>
+                        <td colSpan="6" style={{ textAlign: 'center' }}>Послуг поки немає</td>
                       </tr>
                     )}
                   </tbody>

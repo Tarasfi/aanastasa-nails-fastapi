@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "./BookingModal.css";
+import { IMaskInput } from "react-imask";
 
-const API = "http://192.168.0.102:8000";
+const API = "http://localhost:8000";
 
 const MONTH_NAMES = [
   "Січень",
@@ -26,6 +27,18 @@ function formatDuration(minutes) {
   return mins > 0 ? `${hours} год ${mins} хв` : `${hours} год`;
 }
 
+// Форматування часу з "13:00:00" у "13:00"
+function formatTime(timeStr) {
+  if (!timeStr) return "";
+  const val = typeof timeStr === "object" ? timeStr.time : timeStr;
+  if (typeof val !== "string") return "";
+  const parts = val.split(":");
+  if (parts.length >= 2) {
+    return `${parts[0]}:${parts[1]}`;
+  }
+  return val;
+}
+
 function pad(n) {
   return String(n).padStart(2, "0");
 }
@@ -40,6 +53,11 @@ export default function BookingModal({ service, onClose }) {
   const [services, setServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [selected, setSelected] = useState(service ? [service] : []);
+
+  // Вкладка категорії послуг у модалці ('manicure' | 'pedicure')
+  const [activeCategory, setActiveCategory] = useState(
+    service && service.category === "pedicure" ? "pedicure" : "manicure",
+  );
 
   // Календар
   const today = new Date();
@@ -74,7 +92,12 @@ export default function BookingModal({ service, onClose }) {
         setServices(data);
         if (service) {
           const current = data.find((s) => s.id === service.id);
-          if (current) setSelected([current]);
+          if (current) {
+            setSelected([current]);
+            if (current.category === "pedicure") {
+              setActiveCategory("pedicure");
+            }
+          }
         }
         setLoadingServices(false);
       })
@@ -92,6 +115,17 @@ export default function BookingModal({ service, onClose }) {
       document.body.style.overflow = prev;
     };
   }, []);
+
+  // Розподіл послуг за категоріями
+  const manicureServices = useMemo(
+    () => services.filter((s) => !s.category || s.category === "manicure"),
+    [services],
+  );
+
+  const pedicureServices = useMemo(
+    () => services.filter((s) => s.category === "pedicure"),
+    [services],
+  );
 
   const totalPrice = useMemo(
     () => selected.reduce((sum, item) => sum + Number(item.price || 0), 0),
@@ -199,7 +233,7 @@ export default function BookingModal({ service, onClose }) {
     const payload = {
       service_ids: selectedServiceIds,
       booking_date: dateStr(calYear, calMonth, chosenDay),
-      booking_time: chosenTime,
+      booking_time: formatTime(chosenTime),
       client_name: formData.name.trim(),
       client_phone: formData.phone.trim(),
     };
@@ -231,13 +265,21 @@ export default function BookingModal({ service, onClose }) {
     }
   };
 
+  const currentCategoryServices =
+    activeCategory === "manicure" ? manicureServices : pedicureServices;
+
   return (
     <div
       className="modal-overlay"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="modal">
-        {/* Навігація по кроках (Ховається після підтвердження бронювання) */}
+        {/* Кнопка закриття */}
+        <button className="modal-close-btn" onClick={onClose}>
+          ×
+        </button>
+
+        {/* Навігація по кроках */}
         {!booked && (
           <div className="modal-steps-tabs jost">
             {[
@@ -245,8 +287,6 @@ export default function BookingModal({ service, onClose }) {
               ["datetime", "2. Дата і час"],
               ["confirm", "3. Підтвердження"],
             ].map(([sKey, label]) => {
-              // Переходити на інші етапи через верхній таб можна тільки на 1 і 2 крок.
-              // Крок 3 недоступний для прямого кліку — туди потрапляють тільки через кнопку "Далі →"
               const isClickable =
                 (sKey === "services" ||
                   (sKey === "datetime" && selected.length > 0)) &&
@@ -257,9 +297,7 @@ export default function BookingModal({ service, onClose }) {
                   key={sKey}
                   disabled={!isClickable}
                   onClick={() => {
-                    if (isClickable) {
-                      setStep(sKey);
-                    }
+                    if (isClickable) setStep(sKey);
                   }}
                   className={`modal-step-tab ${step === sKey ? "active" : ""}`}
                   style={{
@@ -284,10 +322,30 @@ export default function BookingModal({ service, onClose }) {
             </h3>
             <p
               className="jost"
-              style={{ color: "#a09090", fontSize: 13, marginBottom: 24 }}
+              style={{ color: "#a09090", fontSize: 13, marginBottom: 16 }}
             >
               Можна вибрати кілька
             </p>
+
+            {/* Вкладки перемикання Манікюр / Педикюр */}
+            <div className="category-toggle-tabs">
+              <button
+                className={`category-tab-btn ${
+                  activeCategory === "manicure" ? "active" : ""
+                }`}
+                onClick={() => setActiveCategory("manicure")}
+              >
+                Манікюр ({manicureServices.length})
+              </button>
+              <button
+                className={`category-tab-btn ${
+                  activeCategory === "pedicure" ? "active" : ""
+                }`}
+                onClick={() => setActiveCategory("pedicure")}
+              >
+                Педикюр ({pedicureServices.length})
+              </button>
+            </div>
 
             {loadingServices ? (
               <div
@@ -298,13 +356,15 @@ export default function BookingModal({ service, onClose }) {
               </div>
             ) : (
               <div className="modal-services-list">
-                {services.map((svc) => {
+                {currentCategoryServices.map((svc) => {
                   const isChosen = selected.some((s) => s.id === svc.id);
                   return (
                     <div
                       key={svc.id}
                       onClick={() => toggleService(svc)}
-                      className={`modal-service-card ${isChosen ? "selected" : ""}`}
+                      className={`modal-service-card ${
+                        isChosen ? "selected" : ""
+                      }`}
                     >
                       <div>
                         <div style={{ fontSize: 16, fontWeight: 500 }}>
@@ -327,6 +387,19 @@ export default function BookingModal({ service, onClose }) {
                     </div>
                   );
                 })}
+
+                {currentCategoryServices.length === 0 && (
+                  <div
+                    className="jost"
+                    style={{
+                      textAlign: "center",
+                      color: "#a09090",
+                      padding: "20px 0",
+                    }}
+                  >
+                    Послуг у цій категорії поки немає
+                  </div>
+                )}
               </div>
             )}
 
@@ -351,7 +424,7 @@ export default function BookingModal({ service, onClose }) {
                         textTransform: "uppercase",
                       }}
                     >
-                      Разом
+                      Обрано послуг: {selected.length}
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 500 }}>
                       ₴{totalPrice}
@@ -360,7 +433,7 @@ export default function BookingModal({ service, onClose }) {
                       className="jost"
                       style={{ fontSize: 12, color: "#a09090" }}
                     >
-                      ⏱ {formatDuration(totalDuration)}
+                      {formatDuration(totalDuration)}
                     </div>
                   </div>
                   <button
@@ -513,16 +586,18 @@ export default function BookingModal({ service, onClose }) {
                     {slots
                       .filter((slot) => !slot.occupied)
                       .map((slot) => {
-                        const isChosen = chosenTime === slot.time;
+                        const slotTimeVal =
+                          typeof slot === "object" ? slot.time : slot;
+                        const isChosen = chosenTime === slotTimeVal;
                         return (
                           <div
-                            key={slot.time}
+                            key={slotTimeVal}
                             className={
                               "time-chip" + (isChosen ? " chosen" : "")
                             }
-                            onClick={() => setChosenTime(slot.time)}
+                            onClick={() => setChosenTime(slotTimeVal)}
                           >
-                            {slot.time}
+                            {formatTime(slotTimeVal)}
                           </div>
                         );
                       })}
@@ -592,8 +667,9 @@ export default function BookingModal({ service, onClose }) {
                 className="jost"
                 style={{ marginTop: 8, fontSize: 12, color: "#a09090" }}
               >
-                📅 {chosenDay} {MONTH_NAMES[calMonth]} {calYear} о {chosenTime}{" "}
-                · ⏱ {formatDuration(totalDuration)}
+                {chosenDay} {MONTH_NAMES[calMonth]} {calYear}{" "}
+                {chosenTime ? `о ${formatTime(chosenTime)}` : ""} ·{" "}
+                {formatDuration(totalDuration)}
               </div>
             </div>
 
@@ -606,13 +682,14 @@ export default function BookingModal({ service, onClose }) {
                   setFormData((p) => ({ ...p, name: e.target.value }))
                 }
               />
-              <input
-                type="tel"
-                placeholder="Номер телефону *"
+              <IMaskInput
+                mask="+380 (00) 000-00-00"
                 value={formData.phone}
-                onChange={(e) =>
-                  setFormData((p) => ({ ...p, phone: e.target.value }))
+                unmask={false} // залишає маску красиво у форматиці
+                onAccept={(value) =>
+                  setFormData((p) => ({ ...p, phone: value }))
                 }
+                placeholder="Номер телефону (+380...) *"
               />
             </div>
 
@@ -625,7 +702,10 @@ export default function BookingModal({ service, onClose }) {
               </button>
               <button
                 className="btn-primary"
-                disabled={!formData.name.trim() || !formData.phone.trim()}
+                disabled={
+                  !formData.name.trim() ||
+                  formData.phone.replace(/\D/g, "").length < 12 // перевіряє, що є повні 12 цифр (380XXXXXXXXX)
+                }
                 onClick={handleSubmitBooking}
               >
                 Записатися
@@ -651,13 +731,14 @@ export default function BookingModal({ service, onClose }) {
               }}
             >
               Дякую за запис, {formData.name}!<br />
-              Анастасія звяжеться з Вами за номером {formData.phone}.
+              Анастасія зв'яжеться з Вами за номером {formData.phone}.
             </p>
             <p
               className="jost"
               style={{ color: "#8a7070", fontSize: 13, marginBottom: 24 }}
             >
-              📅 {chosenDay} {MONTH_NAMES[calMonth]} {calYear} о {chosenTime}
+              {chosenDay} {MONTH_NAMES[calMonth]} {calYear}{" "}
+              {chosenTime ? `о ${formatTime(chosenTime)}` : ""}
             </p>
             <button className="btn-primary" onClick={onClose}>
               Чудово!
